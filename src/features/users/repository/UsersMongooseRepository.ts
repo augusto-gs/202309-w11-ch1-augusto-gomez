@@ -1,23 +1,27 @@
 import User from "../model/Users.js";
-import { type UserStructure } from "../types";
-
-class UserMongooseRepository {
+import {
+  UserCredentialStructure,
+  type UserMongooseRepositoryStructure,
+  type UserWithoutPassword,
+} from "../types";
+import bcrypt from "bcrypt";
+class UserMongooseRepository implements UserMongooseRepositoryStructure {
   getUser = async (
     username: string,
-    password: string,
-  ): Promise<UserStructure> => {
+    userPassword: string,
+  ): Promise<UserWithoutPassword> => {
     const user = await User.findOne({ username });
+
     if (!user) {
       throw new Error("Username not found");
     }
 
-    const userPassword = await User.findOne({ password });
-
-    if (!userPassword) {
-      throw new Error("Incorrect password");
+    if (!(await bcrypt.compare(userPassword, user.password))) {
+      throw new Error("Incorrect credentials");
     }
 
-    return user;
+    const { password, ...userWithoutPassword } = user.toJSON();
+    return userWithoutPassword;
   };
 }
 
