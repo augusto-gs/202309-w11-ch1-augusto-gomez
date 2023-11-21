@@ -1,6 +1,5 @@
 import User from "../model/Users.js";
 import {
-  UserCredentialStructure,
   type UserMongooseRepositoryStructure,
   type UserWithoutPassword,
 } from "../types";
