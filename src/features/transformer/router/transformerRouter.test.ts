@@ -27,7 +27,8 @@ describe("Given a GET/robotos endpoint", () => {
       const expectedStatus = 200;
       const path = "/robots";
 
-      await Transformer.create(transformersMock);
+      await Transformer.create(transformersMock[0]);
+      await Transformer.create(transformersMock[1]);
 
       const response = await request(app).get(path).expect(expectedStatus);
 

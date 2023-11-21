@@ -8,11 +8,17 @@ export interface UserStructure {
 }
 
 export interface UserMongooseRepositoryStructure {
-  getUser: (username: string, password: string) => Promise<UserStructure>;
+  getUser: (username: string, password: string) => Promise<UserWithoutPassword>;
 }
+
+export type UserWithoutIdAndName = Omit<UserStructure, "_id" | "name">;
+
+export type UserWithoutPassword = Omit<UserStructure, "password">;
 
 export type UserCredentialStructure = Request<
   Record<string, unknown>,
   Record<string, unknown>,
-  { username: string; password: string }
+  UserWithoutIdAndName
 >;
+
+export type UserWithoutIdAndPassword = Omit<UserStructure, "_id" | "password">;
