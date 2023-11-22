@@ -1,4 +1,4 @@
-import { type Response } from "express";
+import { type NextFunction, type Response } from "express";
 import UserController from "../UserController";
 import {
   type UserMongooseRepositoryStructure,
@@ -6,6 +6,7 @@ import {
 } from "../../types";
 import { userMock } from "../../mocks/userMock";
 import jwt from "jsonwebtoken";
+import type CustomError from "../../../../server/CustomError/CustomError";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -29,6 +30,8 @@ describe("Given a UsersController loginUser method", () => {
     body: mockUserWithoutName,
   };
 
+  const next: NextFunction = jest.fn();
+
   describe("When it receives a response and an existent user", () => {
     const userRepository: Pick<UserMongooseRepositoryStructure, "getUser"> = {
       getUser: jest.fn().mockResolvedValue(userMock),
@@ -42,6 +45,7 @@ describe("Given a UsersController loginUser method", () => {
       await userController.loginUser(
         req as UserCredentialStructure,
         res as Response,
+        next,
       );
 
       expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
@@ -51,6 +55,7 @@ describe("Given a UsersController loginUser method", () => {
       await userController.loginUser(
         req as UserCredentialStructure,
         res as Response,
+        next,
       );
 
       expect(res.json).toHaveBeenCalledWith({ token: { token } });
@@ -58,31 +63,35 @@ describe("Given a UsersController loginUser method", () => {
   });
 
   describe("When it receives a request with an invalidated password and username", () => {
-    const expectedWrongStatus = 401;
-
     const userRepository: Pick<UserMongooseRepositoryStructure, "getUser"> = {
-      getUser: jest.fn().mockRejectedValue("error"),
+      getUser: jest.fn().mockRejectedValue("errors"),
     };
     const userController = new UserController(userRepository);
 
-    test("Then it should call the status method of the response with 401", async () => {
+    test("Then it should call the next method with an error 404", async () => {
       await userController.loginUser(
         req as UserCredentialStructure,
         res as Response,
+        next,
       );
+      const expectedError = { message: "Wrong credentials", statusCode: 404 };
 
-      expect(res.status).toHaveBeenCalledWith(expectedWrongStatus);
+      expect(next).toHaveBeenCalledWith(expect.objectContaining(expectedError));
     });
 
     test("Then it should call the json method of the response with an error message", async () => {
-      const expectedErrorMessage = { error: "User not found" };
+      const expectedError: Partial<CustomError> = {
+        message: "Wrong credentials",
+        statusCode: 404,
+      };
 
       await userController.loginUser(
         req as UserCredentialStructure,
         res as Response,
+        next,
       );
 
-      expect(res.json).toHaveBeenCalledWith(expectedErrorMessage);
+      expect(next).toHaveBeenCalledWith(expect.objectContaining(expectedError));
     });
   });
 });
