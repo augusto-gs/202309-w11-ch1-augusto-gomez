@@ -1,11 +1,14 @@
 import { connectToDatabase } from "./database/index.js";
 import { startServer } from "./server/app.js";
 import "./server/index.js";
+import debugCreator from "debug";
+
+const debug = debugCreator(":robots:src:index");
 
 const port = process.env.PORT ?? 4000;
 
 if (!process.env.MONGODB_URL) {
-  console.log("Missing MongoDV Connection String");
+  debug("Missing MongoDV Connection String");
   process.exit();
 }
 

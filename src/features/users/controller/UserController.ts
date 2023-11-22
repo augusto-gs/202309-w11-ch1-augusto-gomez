@@ -1,8 +1,9 @@
-import { type Request, type Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 import type UserMongooseRepository from "../repository/UsersMongooseRepository.js";
 import { type JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { type UserCredentialStructure } from "../types.js";
+import CustomError from "../../../server/CustomError/CustomError.js";
 
 class UserController {
   constructor(private readonly userRepository: UserMongooseRepository) {}
@@ -10,6 +11,7 @@ class UserController {
   loginUser = async (
     req: UserCredentialStructure,
     res: Response,
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { username, password } = req.body;
@@ -20,7 +22,8 @@ class UserController {
 
       res.status(200).json({ token: { token } });
     } catch (error) {
-      res.status(401).json({ error: "User not found" });
+      const userError = new CustomError("Wrong credentials", 404);
+      next(userError);
     }
   };
 }
