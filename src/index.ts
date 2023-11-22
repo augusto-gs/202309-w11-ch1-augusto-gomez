@@ -1,3 +1,4 @@
+import "dotenv/config.js";
 import { connectToDatabase } from "./database/index.js";
 import { startServer } from "./server/app.js";
 import "./server/index.js";
