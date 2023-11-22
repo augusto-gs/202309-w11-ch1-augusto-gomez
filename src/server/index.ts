@@ -1,3 +1,4 @@
+import "dotenv/config";
 import morgan from "morgan";
 import app from "./app.js";
 import pingRouter from "../features/ping/router/pingRouter.js";
