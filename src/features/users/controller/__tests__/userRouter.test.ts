@@ -45,4 +45,42 @@ describe("Given a GET/login method", () => {
       expect(responseBody).toStrictEqual(expectedError);
     });
   });
+
+  describe("When it receives a request without a password", () => {
+    test("Then it should respond with a 400 and a 'password is required' message", async () => {
+      const expectedWrongStatus = 400;
+      const credentialsWithoutPassword = {
+        username: "test",
+      };
+      const expectedError = { error: "password is required" };
+
+      const response = await request(app)
+        .post(path)
+        .send(credentialsWithoutPassword)
+        .expect(expectedWrongStatus);
+
+      const responseBody = response.body as { error: string };
+
+      expect(responseBody).toStrictEqual(expectedError);
+    });
+  });
+
+  describe("When it receives a request without a password and a name", () => {
+    test("Then it should respond with a 400 and a 'username is required password is required' message", async () => {
+      const expectedWrongStatus = 400;
+      const credentialsWithoutPassword = {};
+      const expectedError = {
+        error: "username is required, password is required",
+      };
+
+      const response = await request(app)
+        .post(path)
+        .send(credentialsWithoutPassword)
+        .expect(expectedWrongStatus);
+
+      const responseBody = response.body as { error: string };
+
+      expect(responseBody).toStrictEqual(expectedError);
+    });
+  });
 });

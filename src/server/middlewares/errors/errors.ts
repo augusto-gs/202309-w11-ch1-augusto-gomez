@@ -22,11 +22,14 @@ export const generalError = (
 ) => {
   if (error instanceof ValidationError) {
     const validationError = error.details.body?.reduce(
-      (errorMessage, joiError) => `${errorMessage} ${joiError.message}`,
+      (errorMessage, joiError) => `${errorMessage}, ${joiError.message}`,
       "",
     );
 
-    const validationErrorModified = validationError?.replaceAll(/['"]+/g, "");
+    const validationErrorModified = validationError
+      ?.replace(/[,]/, "")
+      .replace(/[\s]/, "")
+      .replaceAll(/['"]+/g, "");
 
     (error as CustomError).customError = validationErrorModified;
     debug(chalk.red(validationErrorModified));

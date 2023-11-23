@@ -22,6 +22,6 @@ app.use(
 
 app.use("/", transformersRouter);
 app.use("/", pingRouter);
-app.use("/", userValidation, userRouter);
+app.use("/", userRouter);
 app.use(endpointNotFound);
 app.use(generalError);
