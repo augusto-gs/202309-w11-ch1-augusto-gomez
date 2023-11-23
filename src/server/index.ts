@@ -7,6 +7,7 @@ import { generalError, endpointNotFound } from "./middlewares/errors/errors.js";
 import cors from "cors";
 import { userRouter } from "../features/users/router/userRouter.js";
 import express from "express";
+import userValidation from "../features/users/schema/usersSchema.js";
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -21,6 +22,6 @@ app.use(
 
 app.use("/", transformersRouter);
 app.use("/", pingRouter);
-app.use("/", userRouter);
+app.use("/", userValidation, userRouter);
 app.use(endpointNotFound);
 app.use(generalError);
