@@ -68,13 +68,13 @@ describe("Given a UsersController loginUser method", () => {
     };
     const userController = new UserController(userRepository);
 
-    test("Then it should call the next method with an error 404", async () => {
+    test("Then it should call the next method with an error 401", async () => {
       await userController.loginUser(
         req as UserCredentialStructure,
         res as Response,
         next,
       );
-      const expectedError = { message: "Wrong credentials", statusCode: 404 };
+      const expectedError = { message: "Wrong credentials", statusCode: 401 };
 
       expect(next).toHaveBeenCalledWith(expect.objectContaining(expectedError));
     });
@@ -82,7 +82,7 @@ describe("Given a UsersController loginUser method", () => {
     test("Then it should call the json method of the response with an error message", async () => {
       const expectedError: Partial<CustomError> = {
         message: "Wrong credentials",
-        statusCode: 404,
+        statusCode: 401,
       };
 
       await userController.loginUser(
