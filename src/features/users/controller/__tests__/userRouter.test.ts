@@ -1,5 +1,5 @@
-import app from "../../../../server/app";
 import "../../../../server/index";
+import app from "../../../../server/app";
 import request from "supertest";
 import User from "../../model/Users";
 
